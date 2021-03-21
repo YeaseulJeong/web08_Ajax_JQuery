@@ -1,0 +1,63 @@
+<!-- 
+화면 만들기 (html, css, javascript(jquery))  jquery는 라이브러리를 끌어다 쓰니까 훨씬 사용하기 쉽다 
+ -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>JQuery를 사용한 비동기 통신</title>
+<style type ="text/css">
+	.title{
+	color: blue; 
+	text-align: center;}
+	#resultView{
+	background-color: yellow;
+	color: red;
+	font-weight: bold; }
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  <!-- Jquery CDN으로 연결해서 jquery library 를 쓰기 위해서 -->
+
+<script>
+// Javascript가 아니라 Jquery 작성 
+$(function(){
+	// alert("1. Start JQuery...");
+	// 언제 호출되는지 어떤 버튼을 눌렀을 때 떠야하는지 이벤트 처리를 해줘야 한다 
+	
+	$('#ajaxBtn').click(function() {   // javascript 를 쓸 때는 onclick = ~~ 로 했었는데 JQuery는 function 안에서 바로 click 해서 실행 
+		var id = $('#id').val();  // 값을 Servlet으로 넘겨야 하니까 받아오는 것
+		var pass = $('#pass').val();
+		
+		// alert(id +","+pass);
+		
+		// Ajax 시작 ...
+		$.ajax({
+			// 요청
+			type: "get",
+			url: "JQueryAjax?id="+id+"&pass="+pass,
+			
+			// 응답
+			success: function(result){  // 응답하는 내용이 이곳에 떨어진다 result 대신 aaa로 할 수도 있다. span 에 뿌려야 한다  (javascript에서는 innerHTML 로)
+				// 이 안에 응답을 작성한다
+				$('#resultView').html(result)   // 여기서 .css로 해서 바로 꾸밀 수 있지만 id tag 써서 <style>에서 따로 꾸밀 수 있다 
+			}// success			
+		}); // ajax
+	}); // click
+}); //function
+</script>
+
+</head>
+<body>
+<h2 class="title">Ajax Using Jquery 2...</h2>
+<form>
+	ID <input type="text" name ="id" id ="id"><br><br>
+	PASS <input type="password" name = "pass" id ="pass"><br><br>
+	<input type="button" value="ajaxBtn" id="ajaxBtn">
+	<span id="resultView"></span>
+</form>
+
+</body>
+</html>

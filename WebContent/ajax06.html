@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Register Form...</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script >
+	$(function() {
+		// 1. 버튼 클릭하면 함수 호출
+		$("#regBtn").click(function(){   // 버튼은 이벤트 발생시키는 함수가 click 이다  버튼 클릭하면 비동기로 여기로 보내는 것     type 이 submit 이 아니고 button 이니까 #frm 쓸 필요 없음 
+			
+			$.ajax({
+				type: 'post',
+				url: 'SerialAjax',  // form 값을 바로  Servlet 으로 보내지 않고 ajax에서 비동기 처리해서 여기서 보내고 싶다  Count.java 에서 입력한 문자열을 그대로 두고 실행 후 결과값만 바뀌게 할때
+				// ajax05.html 은 type = submit 이었기 때문에 url 이 필요 없는데, 이번에는 button 이기 때문에 url이 필요하다
+				data: $('#frm').serialize(), // form 안에 있는 값 싹다 넘어간다               그럼 일일이 .val() 로 변수로 받아서 해줄 필요 없음 
+				// serialize()로 보낼때 SerialAjax에서 getParameter 로 받을 때는 form 의 name 값들로 찾으면 된다 
+				
+				success: function(data){
+					$('#regView').html(data).css({
+						'background': 'yellow',
+						'color': 'blue'
+					}); // css
+				}//success
+				
+			});// ajax
+		}); //click
+		
+		
+		// 여기서부터 keyEvent적용
+		$('#id').keyup(function(){
+			var id = $(this).val();   // form에서 값을 가져올 때 .val()을 쓰는 것
+			// alert(id);  //  내가 id 를 form 에서 잘 가져왔는지 확인차  
+			// id 값이 4~8자 사이일때만 허용한다
+			if(id.length < 4 || id.length>8){
+				$('#idCheckView').html('아이디는 4자 이상, 8자 미만이어야 합니다').css('color', 'red');  // 여기다가 바로 CSS 효과를 줄 수 있다
+				return;
+				}else{
+					// id 가 4자이상 8자 미만인 경우에만 ajax 적용
+					$.ajax({
+					type:'post',
+					url:'SerialAjax',
+					// data: "id"+id,  로 바로 받아오는 form 값의 id를 직접 id로 가져와도 되지만  ( form 값 전체에서 serialize()를 활용하는 방법도 있다_아래  )
+					data: $('form[name=idfrm]').serialize(),   // form 전체를 지정할 때, ajax05에서처럼 form 값의 id로 전체를 지정해서 serialize()로 form 값 전체를 받아올 수 있지만
+					// 이번 ajax06처럼 form 전체에 부여된 id가 없고 name 이 있을 수 있기때문에 활용 방법
+					// form 의 name 이 idfrm 인걸 찾아라 
+					// 그러면 idfrm 의 이름을 가진 form 의 값 전체를 다 가져오는데 어짜피 가져와야 하는 값이 사용자가 입력한 id 값 하나뿐이기 때문에 data: "id"+id 와 동일하다
+					
+					// SerialAjax Servlet 에 가서 DAO 에 넘겨져서 idCheck() 갔다가 다시 SerialAjax 로 와서 data 에 저장되는거 까지한 후 success (data)로 떨어진다
+					// id 중복환인에서 비즈니스 로직의 return type 은 boolean. DB에 id가 있으면 DAO 에서 boolean 값으로만 return 하면 된다. 그 이상 필요없다
+					success: function(data){
+						if(data=='true') $('#idCheckView').html(id+":: 사용불가").css('color', 'red');
+						// 이때 true 를 'true'로 해서 받아줘야 함  SerialAjax 에서 data 값에 담아서 true 를 넘길 때 String 이 되어버린다 
+						else  $('#idCheckView').html(id+":: 사용가능").css('color', 'green');
+					}
+				}) // ajax
+			} // else
+		}); // keyup		
+	}); // function
+</script>
+</head>
+<body>
+<h2>Register Form...</h2>
+<form action ="SerialAjax" id = "frm">
+
+<!--같은 SerialAjax 로 요청이 들어 가기때문에 SerialAjax 입장에서는 어느요청에서 불렀는지를 알아야 할 때 hidden 사용.  command 가 register/idcheck -->
+
+	NAME : <input type="text" name ="name">
+	ADDRESS : <input type="text" name ="addr">
+	<input type="hidden" name = "command" value ="register"><p/>  
+
+	<input type="button" value="가입" id="regBtn"> 
+	
+</form>
+<hr>
+<div id="regView"></div>     <!-- 나중에 return 값이 출력공간에 대한 id -->
+<hr>
+
+<h2>Member Id Check Form...</h2>
+<form action ="SerialAjax" id = "idfrm" name="idfrm">
+
+<!--같은 SerialAjax 로 요청이 들어 가기때문에 SerialAjax 입장에서는 어느요청에서 불렀는지를 알아야 할 때 hidden 사용.  command 가 register/idcheck -->
+	
+	ID : <input type="text" name ="id" id="id">
+	<span id="idCheckView"></span>
+	<input type="hidden" name = "command" value ="idcheck"><p/>
+</form>
+</body>
+</html>

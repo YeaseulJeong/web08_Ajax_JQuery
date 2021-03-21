@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<style type ="text/css">
+ 	span {background-color: blue; color: red;}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  <!-- Jquery CDN으로 연결해서 jquery library 를 쓰기 위해서 -->
+
+<script>
+// Jquery는 function 안에서 사용되어야 
+// Javascript가 아니라 Jquery 작성 
+$(function(){
+	// 언제 호출되는지 어떤 버튼을 눌렀을 때 떠야하는지 이벤트 처리를 해줘야 한다   onclick  대신에  id 값으로  function 안에 쓰는 것 
+	// 버튼을 누르면 JQuery로 함수 호출 되도록 하기
+	// form에서받아 Servlet 으로 보낼 값이 딱히 없다 따라서 .val()는 pass 안해도 됨
+	
+	$('#clickBtn').click(function() {      // javascript 를 쓸 때는 onclick = ~~ 로 했었는데 JQuery는 function 안에서 바로 click 해서 실행 
+		// var count = $('#countBtn').val();   // form 값을 받아올때만 val을 쓴다   	화면에서 받아올 것도 없고 그래서 Servlet 에 넣어서 보낼 것도 없으니까 skip
+		// 대신 버튼을 누르면 즉 특정한 이벤트가 발생했을 때  > 비동기 시작 
+		
+		
+		//alert('click...');  // 비동기까지 잘 돌아갔는지 확인
+		// Ajax 시작 ...비동기 시작
+		$.ajax({
+			// 요청
+			type: "post",
+			url: "CountServlet",   // post 여도 Servlet으로 보낼게 없으니까 data: 부분 없음  
+			// data 로 가지고 Servlet 갈게 없으니까 (form 값도 없어서 가지고 갈게 아예 없음)
+			
+			// 응답
+			success: function(resultData){  // 응답하는 내용이 이곳에 떨어진다 resultData 대신 aaa로 할 수도 있다. 
+				// 이 안에 응답을 작성한다
+				$('#resultView').html(resultData) // count 값이 날라온다   span 에 뿌려야 한다  (javascript에서는 innerHTML 로)
+			},// success	
+			
+			// 여기서부터 
+			error: function(){
+				alert("응답시간 지연... Error 처리함!!")   // alert 는 팝업창으로 띄울 수도 있고, #rewultView 에 뿌릴 수도 있다.
+			},
+			timeout:1000  // 1초동안 서버로부터 응답이 없으면 에러 발생시킴 (응답 대기시간을 지정) 1초가 넘어갈 경우를 생각해서 쓰레드로 잡아놓음 // 여기까지는 CountServlet 에서 주석 풀고 돌려봐야 함 
+			
+		}); // ajax
+	}); // click
+}); //function
+</script>
+
+
+</head>
+<body>
+
+<!-- 
+JQuery 코드로 변경
+서블릿 CountServlet 으로 요청 o
+메서드 방식은 post 방식으로  o
+resultView 출력은 stypeSheet 로 마무리 o
+: 글자색, 글자 크기, 배경색 지정
+ -->
+ 
+	<h2 class = "title">Show Count</h2>
+	<input type ="button" value="카운트 증가하기" id="clickBtn">
+	<hr> 
+	<span id ="resultView"></span>
+	<div></div>
+</body>
+</html>

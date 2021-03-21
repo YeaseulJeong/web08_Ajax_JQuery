@@ -1,0 +1,63 @@
+<!-- 
+1. 화면 만들기 (html, css, javascript(jquery))  jquery는 라이브러리를 끌어다 쓰니까 훨씬 사용하기 쉽다 
+ -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>JQuery를 사용한 비동기 통신</title>
+<style type ="text/css">
+	.title{color: blue; text-align: center;}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  <!-- Jquery CDN으로 연결해서 jquery library 를 쓰기 위해서 -->
+
+<script>
+// Javascript가 아니라 Jquery 작성 
+$(function(){
+	// alert("1. Start JQuery...");
+	// 언제 호출되는지 어떤 버튼을 눌렀을 때 떠야하는지 이벤트 처리를 해줘야 한다 
+	
+	$('#ajaxBtn').click(function() {   // javascript 를 쓸 때는 onclick = ~~ 로 했었는데 JQuery는 function 안에서 바로 click 해서 
+	// 버튼이 눌렸을 때 비로소 함수 호출이 되도록 해야 한다
+		var id = $('#id').val();    // Javascript에서는 document.frm.id.value; 로 썼음
+		var pass = $('#pass').val();  // 값을 Servlet으로 넘겨야 하니까 받아오는 것
+		
+		// alert(id +","+pass);
+		
+		// Ajax 시작 ...
+		$.ajax({
+			// 요청  javascript로 치면 startRequest() 함수안에 들어가는 값들 
+			type: "post",
+			url: "JQueryAjax",   // 보낼 Servlet = 이벤트 함수 
+			data: "id="+id+"&pass="+pass,  // get 방식일때는 따로 data가 필요없고 url뒤에 ?로 써서 뒤로 넘기면 된다
+			
+			// 응답 받는 부분
+			success: function(result){  // 응답하는 내용이 이곳에 떨어진다 result 대신 aaa로 할 수도 있다. 
+				// 이 안에 응답을 작성한다
+				$('#resultView').html(result).css({  //span 에 뿌려야 한다  (javascript에서는 innerHTML 로)
+					'background':'yellow',
+					'color':'red',
+					'font-weight':'bold'
+				});// css
+			}// success			
+		}); // ajax
+	}); // click
+}); //function
+</script>
+
+</head>
+<body>
+<h2 class="title">Ajax Using Jquery...</h2>
+<form>
+	ID <input type="text" name ="id" id ="id"><br><br>
+	PASS <input type="password" name = "pass" id ="pass"><br><br>
+	<input type="button" value="ajaxBtn" id="ajaxBtn">
+	<span id="resultView"></span>
+</form>
+
+</body>
+</html>

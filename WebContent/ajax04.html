@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Ajax Using JQuery...</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script >
+$(function(){
+	$('#player').change(function() {  // click 이 아니다.원래는 버튼 click 이 일어나면서부터 시작의 의미로   
+		// change로 선택자와 함수 연결 _ 아이템이 변경될 때마다 이벤트 발생시킴 
+		// 비동기가 들어간다
+		// 화면에서 받아올 값 특정 player
+		
+		if ($(this).val()=="") {// change 이벤트가 적용된 아이템 값 자신을 가르키는 것 _ 현재 이벤트가 적용된 것
+			// 즉 어떤 선수도 선택하지 않았다면
+			alert("한명의 선수를 선택하세요");
+			return;
+		}
+	
+		// 나 var player = $('#player').val();    // Servlet 에 넘길 값이 필요한 경우. 어떤 선수가 화면에서 선택됐는지 같이 서버에 넘겨줘야 한다 
+		$.ajax({
+			// 요청
+			// 나 type: "get",
+			// 나 url: "AddressServlet?player="+player, 
+					
+				type:'post',
+				url: 'AddressServlet',
+				data: "player="+$(this).val(),
+			
+			// 응답
+			success: function(resultData){  // 응답하는 내용이 이곳에 떨어진다 result 대신 aaa로 할 수도 있다. span 에 뿌려야 한다  (javascript에서는 innerHTML 로)
+				// 이 안에 응답을 작성한다
+				$('#resultView').html(resultData); // count 값이 날라온다 
+			}
+		}); // ajax
+	}); // click
+}); //function
+</script>
+</head>
+
+<body>
+<h2>Ajax WorkShop01 Using JQuery</h2>
+<form>
+	<select id="player">
+		<option value="">=====축구 선수들=====</option>
+		<option>Son</option>
+		<option>Park</option>
+		<option>Messi</option>
+		<option>Lee</option>
+		<option>Ahn</option>
+		<option>Hwang</option>	
+	</select>
+	<hr>
+	<span id="resultView"></span>
+</form>
+</body>
+</html>
